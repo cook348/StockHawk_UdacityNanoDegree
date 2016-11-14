@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_line_graph">
+
+    <com.db.chart.view.LineChartView
+        xmlns:chart="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/linechart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        chart:chart_axisBorderSpacing="8dp"
+        chart:chart_axisTopSpacing="8dp"
+        chart:chart_axisColor="@color/white"
+        chart:chart_labelColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/empty_view_chart"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/no_historical_data_available"
+        android:visibility="gone"/>
+
+</FrameLayout>

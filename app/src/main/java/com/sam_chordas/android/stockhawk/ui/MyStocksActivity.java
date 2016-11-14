@@ -19,6 +19,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.sam_chordas.android.stockhawk.R;
@@ -36,6 +37,7 @@ import com.melnykov.fab.FloatingActionButton;
 import com.sam_chordas.android.stockhawk.touch_helper.SimpleItemTouchHelperCallback;
 
 public class MyStocksActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+  public static final String EXTRA_PLOT_SYMBOL = "com.sam_chordas.android.stockhawk.plot_intent";
 
   /**
    * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -52,6 +54,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
   private Context mContext;
   private Cursor mCursor;
   boolean isConnected;
+  private RecyclerView mRecyclerView;
+  private TextView mEmptyTextView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -69,30 +73,39 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     mServiceIntent = new Intent(this, StockIntentService.class);
     if (savedInstanceState == null){
       // Run the initialize task service so that some stocks appear upon an empty database
-      mServiceIntent.putExtra("tag", "init");
+      mServiceIntent.putExtra(Utils.TAG, Utils.INIT);
       if (isConnected){
         startService(mServiceIntent);
       } else{
         networkToast();
       }
     }
-    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
     mCursorAdapter = new QuoteCursorAdapter(this, null);
-    recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
+    mRecyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
             new RecyclerViewItemClickListener.OnItemClickListener() {
               @Override public void onItemClick(View v, int position) {
-                //TODO:
+
+                Intent plotStockActivityIntent = new Intent(mContext, PlotStockActivity.class);
+                // Get the textview from the View and the text from it, that is the symbol
+                TextView symbolTextview = (TextView) v.findViewById(R.id.stock_symbol);
+                String symbol =symbolTextview.getText().toString();
+                plotStockActivityIntent.putExtra(EXTRA_PLOT_SYMBOL, symbol);
+                startActivity(plotStockActivityIntent);
                 // do something on item click
               }
             }));
-    recyclerView.setAdapter(mCursorAdapter);
 
+    mRecyclerView.setAdapter(mCursorAdapter);
+
+    // recylcer view empty view
+    mEmptyTextView = (TextView) findViewById(R.id.empty_view);
 
     FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-    fab.attachToRecyclerView(recyclerView);
+    fab.attachToRecyclerView(mRecyclerView);
     fab.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         if (isConnected){
@@ -108,15 +121,15 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                       new String[] { input.toString() }, null);
                   if (c.getCount() != 0) {
                     Toast toast =
-                        Toast.makeText(MyStocksActivity.this, "This stock is already saved!",
+                        Toast.makeText(MyStocksActivity.this, R.string.warn_stock_already_saved,
                             Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
                     toast.show();
                     return;
                   } else {
                     // Add the stock to DB
-                    mServiceIntent.putExtra("tag", "add");
-                    mServiceIntent.putExtra("symbol", input.toString());
+                    mServiceIntent.putExtra(Utils.TAG, Utils.ADD);
+                    mServiceIntent.putExtra(QuoteColumns.SYMBOL, input.toString());
                     startService(mServiceIntent);
                   }
                 }
@@ -131,13 +144,13 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
 
     ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mCursorAdapter);
     mItemTouchHelper = new ItemTouchHelper(callback);
-    mItemTouchHelper.attachToRecyclerView(recyclerView);
+    mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
     mTitle = getTitle();
     if (isConnected){
       long period = 3600L;
       long flex = 10L;
-      String periodicTag = "periodic";
+      String periodicTag = Utils.PERIODIC;
 
       // create a periodic task to pull stocks once every hour after the app has been opened. This
       // is so Widget data stays up to date.
@@ -214,6 +227,13 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
 
   @Override
   public void onLoadFinished(Loader<Cursor> loader, Cursor data){
+    if(!data.moveToFirst()){
+      mRecyclerView.setVisibility(View.GONE);
+      mEmptyTextView.setVisibility(View.VISIBLE);
+    } else {
+      mRecyclerView.setVisibility(View.VISIBLE);
+      mEmptyTextView.setVisibility(View.GONE);
+    }
     mCursorAdapter.swapCursor(data);
     mCursor = data;
   }

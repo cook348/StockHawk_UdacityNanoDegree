@@ -1,13 +1,48 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
+
+  <!--The Title of the Application-->
   <string name="app_name">Stock Hawk</string>
 
-  <string name="action_example">Example action</string>
+  <!--Activity Titles-->
+  <string name="title_activity_plot_stock">Stock Value History</string>
 
+  <!--Menu Action Titles-->
+  <string name="action_example">Example action</string>
   <string name="action_settings">Settings</string>
-  <string name="action_change_units">Change Units</string>
+  <string name="action_change_units">Click Here to Change Units</string>
+
   <string name="symbol_search">Symbol Search</string>
   <string name="content_test">Search for a Stock Symbol</string>
   <string name="input_hint">FB</string>
-  <string name="input_prefill"></string>
+  <string name="input_prefill" translatable="false"></string>
+  <string name="string_init">init</string>
+  <string name="stock_intent_service">Stock Intent Service</string>
+
+  <!--A11y-->
+  <string name="stock_symbol">Stock Symbol: <xliff:g id="symbol">%1$s</xliff:g></string>
+  <string name="bid_price">Bid Price: <xliff:g id="bidprice">%1$s</xliff:g></string>
+  <string name="day_change">Day Change: <xliff:g id="pricechange">%1$s</xliff:g></string>
+
+  <string name="not_applicable">N/A</string>
+  <string name="no_quote_data">No Stock Quote Data Available. Stock Quotes May Be Out of Date.</string>
+  <string name="no_historical_data_available">No Historical Data Available</string>
+
+  <!--Strings for Toasts-->
   <string name="network_toast">Uh-oh! This app requires an internet connection</string>
+  <string name="warn_stock_already_saved">This stock is already saved!</string>
+
+  <string name="fab_content_description">Click here to add a new stock symbol</string>
+  <string name="stock_not_found">Stock Not Found</string>
+
+
+  <!--App Widget Strings-->
+  <string name="appwidget_text">Stock Hawk Widget</string>
+  <string name="add_widget">Add widget</string>
+
+  <!--Strings that should not be translated-->
+  <string name="error_batch_insert_message" translatable="false">Error applying batch insert</string>
+    <string name="widget_empty_text">No Stock Quotes Found</string>
+    <string name="month_performance">Monthly Performance</string>
+
+
 </resources>

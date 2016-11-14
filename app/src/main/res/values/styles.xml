@@ -21,4 +21,28 @@
     <item name="android:textAllCaps">true</item>
   </style>
 
+  <!--Widget Text Styles-->
+  <style name="StockSymbolTextStyleWidget">
+    <item name="android:textSize">18sp</item>
+    <item name="android:textAllCaps">true</item>
+  </style>
+
+  <style name="BidPriceTextStyleWidget">
+    <item name="android:textSize">16sp</item>
+  </style>
+  <style name="PercentChangeTextStyleWidget">
+    <item name="android:textSize">16sp</item>
+    <item name="android:textColor">#FFF</item>
+    <item name="android:textStyle">bold</item>
+  </style>
+
+  <style name="CustomTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+  <style name="CustomTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+  <style name="AppTheme.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+  </style>
+
 </resources>

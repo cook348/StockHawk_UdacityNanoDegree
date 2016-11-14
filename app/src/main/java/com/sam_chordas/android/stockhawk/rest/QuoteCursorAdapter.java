@@ -45,10 +45,20 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
 
   @Override
   public void onBindViewHolder(final ViewHolder viewHolder, final Cursor cursor){
-    viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex("symbol")));
-    viewHolder.bidPrice.setText(cursor.getString(cursor.getColumnIndex("bid_price")));
+
+    String symbol = cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL));
+    viewHolder.symbol.setText(symbol);
+    viewHolder.symbol.setContentDescription(mContext.getString(R.string.stock_symbol, symbol));
+
+    String bidPrice = cursor.getString(cursor.getColumnIndex(QuoteColumns.BIDPRICE));
+    if(bidPrice.equals("")){
+      bidPrice = mContext.getString(R.string.stock_not_found);
+    }
+    viewHolder.bidPrice.setText(bidPrice);
+    viewHolder.bidPrice.setContentDescription(mContext.getString(R.string.bid_price, bidPrice));
+
     int sdk = Build.VERSION.SDK_INT;
-    if (cursor.getInt(cursor.getColumnIndex("is_up")) == 1){
+    if (cursor.getInt(cursor.getColumnIndex(QuoteColumns.ISUP)) == 1){
       if (sdk < Build.VERSION_CODES.JELLY_BEAN){
         viewHolder.change.setBackgroundDrawable(
             mContext.getResources().getDrawable(R.drawable.percent_change_pill_green));
@@ -65,11 +75,18 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
             mContext.getResources().getDrawable(R.drawable.percent_change_pill_red));
       }
     }
+
+    String changeText;
     if (Utils.showPercent){
-      viewHolder.change.setText(cursor.getString(cursor.getColumnIndex("percent_change")));
+      changeText = cursor.getString(cursor.getColumnIndex(QuoteColumns.PERCENT_CHANGE));
     } else{
-      viewHolder.change.setText(cursor.getString(cursor.getColumnIndex("change")));
+      changeText = cursor.getString(cursor.getColumnIndex(QuoteColumns.CHANGE));
     }
+    if(changeText.equals("")){
+      changeText = mContext.getString(R.string.not_applicable);
+    }
+    viewHolder.change.setText(changeText);
+    viewHolder.change.setContentDescription(mContext.getString(R.string.day_change, changeText));
   }
 
   @Override public void onItemDismiss(int position) {
